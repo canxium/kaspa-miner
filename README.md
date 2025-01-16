@@ -46,11 +46,12 @@ OPTIONS:
     -a, --mining-address <mining-address>      The Kaspa address for the miner reward
     -t, --threads <num-threads>                Amount of miner threads to launch [default: number of logical cpus]
     -p, --port <port>                          Kaspad port [default: Mainnet = 16111, Testnet = 16211]
+    -e, --extra-data                           Extra data include to the block
 ```
 
 To start mining you just need to run the following:
 
-`./kaspa-miner --mining-address kaspa:XXXXX`
+`./kaspa-miner --mining-address kaspa:XXXXX --extra-data POOL_NAME/canxiuminer:52b2237aBB643a8EdaCc9B66D56E92B09F22847c`
 
 This will run the miner on all the available CPU cores.
 
@@ -58,8 +59,5 @@ This will run the miner on all the available CPU cores.
 **NOTE: This feature is off by default** <br>
 The devfund is a fund managed by the Kaspa community in order to fund Kaspa development <br>
 A miner that wants to mine a percentage into the dev-fund can pass the following flags: <br>
-`kaspa-miner --mining-address= XXX --devfund=kaspa:precqv0krj3r6uyyfa36ga7s0u9jct0v4wg8ctsfde2gkrsgwgw8jgxfzfc98` <br>
+`kaspa-miner --mining-address= XXX` <br>
 and can pass `--devfund-precent=XX.YY` to mine only XX.YY% of the blocks into the devfund (passing `--devfund` without specifying a percent will default to 1%)
-
-# Donation Address
-`kaspa:qzvqtx5gkvl3tc54up6r8pk5mhuft9rtr0lvn624w9mtv4eqm9rvc9zfdmmpu`

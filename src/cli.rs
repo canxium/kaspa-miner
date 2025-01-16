@@ -44,6 +44,9 @@ pub struct Opt {
     #[clap(long, display_order = 10)]
     /// Output logs in alternative format (same as kaspad)
     pub altlogs: bool,
+    #[clap(short = 'e', long = "extra-data", display_order = 0)]
+    /// The Kaspa extra data
+    pub extrad_data: String,
 }
 
 fn parse_devfund_percent(s: &str) -> Result<u16, &'static str> {

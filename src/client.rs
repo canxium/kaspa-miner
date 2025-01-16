@@ -11,14 +11,13 @@ use tokio::sync::mpsc::{self, error::SendError, Sender};
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{transport::Channel as TonicChannel, Streaming};
 
-static EXTRA_DATA: &str = concat!(env!("CARGO_PKG_VERSION"));
-
 #[allow(dead_code)]
 pub struct KaspadHandler {
     client: RpcClient<TonicChannel>,
     pub send_channel: Sender<KaspadMessage>,
     stream: Streaming<KaspadMessage>,
     miner_address: String,
+    extra_data: String,
     mine_when_not_synced: bool,
     devfund_address: Option<String>,
     devfund_percent: u16,
@@ -26,7 +25,7 @@ pub struct KaspadHandler {
 }
 
 impl KaspadHandler {
-    pub async fn connect<D>(address: D, miner_address: String, mine_when_not_synced: bool) -> Result<Self, Error>
+    pub async fn connect<D>(address: D, miner_address: String, mine_when_not_synced: bool, extra_data: String) -> Result<Self, Error>
     where
         D: TryInto<tonic::transport::Endpoint>,
         D::Error: Into<Error>,
@@ -36,7 +35,7 @@ impl KaspadHandler {
         send_channel.send(GetInfoRequestMessage {}.into()).await?;
         send_channel
             .send(
-                GetBlockTemplateRequestMessage { pay_address: miner_address.clone(), extra_data: EXTRA_DATA.into() }
+                GetBlockTemplateRequestMessage { pay_address: miner_address.clone(), extra_data: extra_data.clone() }
                     .into(),
             )
             .await?;
@@ -46,6 +45,7 @@ impl KaspadHandler {
             stream,
             send_channel,
             miner_address,
+            extra_data,
             mine_when_not_synced,
             devfund_address: None,
             devfund_percent: 0,
@@ -70,7 +70,7 @@ impl KaspadHandler {
             _ => self.miner_address.clone(),
         };
         self.block_template_ctr += 1;
-        self.client_send(GetBlockTemplateRequestMessage { pay_address, extra_data: EXTRA_DATA.into() }).await
+        self.client_send(GetBlockTemplateRequestMessage { pay_address, extra_data: self.extra_data.clone() }).await
     }
 
     pub async fn listen(&mut self, miner: &mut MinerManager, shutdown: ShutdownHandler) -> Result<(), Error> {
